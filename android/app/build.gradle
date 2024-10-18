@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace "com.example.testapp"
+    namespace 'com.example.testapp'
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -34,7 +34,6 @@ android {
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
-    namespace 'com.example.testapp'
 
     buildTypes {
         release {

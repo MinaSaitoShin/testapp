@@ -52,7 +52,7 @@ dependencies:
   device_info_plus: ^11.0.0
   share_plus: ^10.0.3
   open_file: ^3.5.9
-  image_gallery_saver: ^2.0.3
+  photo_manager: ^3.5.1
 
 dev_dependencies:
   flutter_test:

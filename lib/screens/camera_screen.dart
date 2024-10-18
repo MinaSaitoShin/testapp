@@ -10,7 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:photo_manager/photo_manager.dart';
 import 'qr_code_screen.dart';
 import '../services/firebase_service.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -97,7 +97,7 @@ class _CameraClassState extends State<CameraScreen>  with WidgetsBindingObserver
       return StatefulBuilder(
         builder: (BuildContext context, StateSetter setState) {
           return AlertDialog(
-            title: Text('必要なアプリがインストールされていません'),
+            title: Text('アプリのインストールを確認してください。'),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -509,25 +509,28 @@ class _CameraClassState extends State<CameraScreen>  with WidgetsBindingObserver
     return filePath;
   }
 
-  Future<String> _saveImageToLocalStorageIOS(Uint8List imageBytes) async {
-    final result = await ImageGallerySaver.saveImage(
-      imageBytes,
-      quality: 100,
-      name: 'edited_image_${DateTime.now().millisecondsSinceEpoch}'
-    );
-    if(result['isSuccess']) {
-      print('画像がフォトライブラリに保存されました');
-      return result['filePath'];
-    } else {
-      throw Exception('画像の保存に失敗しました');
+   Future<String> _saveImageToLocalStorageIOS(Uint8List imageBytes) async {
+    final Directory directory = await getApplicationDocumentsDirectory();
+    String dirPath = directory.path;
+    Directory newDirectory = Directory(dirPath);
+
+    if(!await newDirectory.exists()) {
+      await newDirectory.create(recursive: true);
     }
-    // final directory = await getApplicationDocumentsDirectory();
-    // final filePath = '${directory.path}/edited_image_${DateTime.now().millisecondsSinceEpoch}.jpg';
-    // final file = File(filePath);
-    //
-    // await file.writeAsBytes(imageBytes);
-    // print('画像がIOSのローカルに保尊されました $filePath');
+
+    final String filename = 'edited_image_${DateTime.now().millisecondsSinceEpoch}.jpg';
+    final String filePath ='$dirPath/$filename';
+    final file = File(filePath);
+    await file.writeAsBytes(imageBytes);
+    print('画像がドキュメントディレクトリに保存されました：$filePath');
     // return filePath;
+    try {
+      final AssetEntity asset = await PhotoManager.editor.saveImage(imageBytes,filename:filename);
+      print('画像がフォトライブラリに保存されました: ${asset.id}');
+      return asset.id;
+    } catch(e) {
+      throw Exception('フォトライブラリへの保存に失敗しました：$e');
+    }
   }
 
   Future<void> _openFileInGallery(String filePath) async {
