@@ -53,5 +53,7 @@
     <string>フォトライブラリに画像を保存するためのアクセス権が必要です。</string>
     <key>NSDocumentsFolderUsageDescription</key>
     <string>ストレージにアクセスするための権限が必要です。</string>
+    <key>MinimumOSVersion</key>
+    <string>13.0</string>
 </dict>
 </plist>
