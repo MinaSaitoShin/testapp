@@ -6,12 +6,14 @@ workflows:
     scripts:
       - name: Install dependencies for iOS
         script: |
+          brew install cocoapods
+          pod repo update
           flutter pub get
           pod install --repo-update
       - name: Run tests
         script: flutter test
       - name: Build for iOS Simulator
-        script: flutter build ios --simulator
+        script: flutter build ios --simulator --debug
     artifacts:
       - build/ios/iphonesimulator/*.app
     publishing:
@@ -36,4 +38,3 @@ workflows:
       email:
         recipients:
           - minasaito.shinnihon@gmail.com
-
